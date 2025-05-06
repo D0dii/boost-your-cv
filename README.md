@@ -1,29 +1,57 @@
-# Create T3 App
+# 🚀 Boost Your CV
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+**Boost Your CV** is an AI-powered resume analyzer that helps you tailor your CV to specific job descriptions. It gives you:
 
-## What's next? How do I make an app with this?
+- ✅ Match Percentage
+- 💪 Strength Highlights
+- 🛠️ Suggestions for Improvement
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Powered by OpenAI's API, this app provides actionable insights to help you stand out in your job applications.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+---
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## 🔍 Features
 
-## Learn More
+- Upload your **CV**
+- Paste your **Job Description**
+- Instantly see:
+  - 📊 Match Percentage
+  - 💡 Key Strengths
+  - 🧠 Personalized Improvement Tips
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+---
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## 🛠️ Built With
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- **T3 Stack**:
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+  - Shadcn
+  - TRPC
+- **OpenAI API** for analysis
 
-## How do I deploy this?
+---
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+## 🔐 Requirements
+
+- Node.js (v18+)
+- Your own [OpenAI API key](https://platform.openai.com/account/api-keys)
+
+---
+
+## ⚙️ Getting Started
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/yourusername/boost-your-cv
+cd boost-your-cv
+npm install
+```
+Create a .env file in the root directory and add your OpenAI key:
+API_KEY=your_openai_api_key
+```bash
+npm run dev
+```
+The app will be available at http://localhost:3000
