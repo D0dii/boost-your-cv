@@ -8,6 +8,10 @@
 
 Powered by OpenAI's API, this app provides actionable insights to help you stand out in your job applications.
 
+<p align="center">
+  <img src="demo.gif" alt="Opis GIF-a" />
+</p>
+
 ---
 
 ## 🔍 Features
@@ -49,9 +53,12 @@ git clone https://github.com/yourusername/boost-your-cv
 cd boost-your-cv
 npm install
 ```
+
 Create a .env file in the root directory and add your OpenAI key:
 API_KEY=your_openai_api_key
+
 ```bash
 npm run dev
 ```
+
 The app will be available at http://localhost:3000
