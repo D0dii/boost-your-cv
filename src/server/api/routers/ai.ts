@@ -22,11 +22,13 @@ export const aiRouter = createTRPCRouter({
           1. Analyze the JOB DESCRIPTION and the CV.
           2. Provide a MATCH SCORE as a percentage (%) that reflects how closely the CV aligns with the job.
           3. Offer 2–5 SHORT SUGGESTIONS to improve the CV or highlight missing qualifications.
+          4. Say a few CV strengths to make user feel better.
           
           Return your response STRICTLY in the following JSON format:
           {
-            "match": "XX%",
+            "matchPercentage": "XX",
             "suggestions": ["Suggestion 1", "Suggestion 2", "..."]
+            "strengths": ["Strength 1", "Strength 2", "..."]
           }
           
           Ensure suggestions are specific, actionable, and written in a helpful tone. Do not explain the result, only return the JSON.

@@ -8,18 +8,20 @@ import { Label } from "@radix-ui/react-label";
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import pdfToText from "react-pdftotext";
 import { z } from "zod";
-import { CircleSmall } from "lucide-react";
+import type { CvAnalyzeResult } from "@/types";
+import { MatchResults } from "./match-results";
+import { CheckCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const aiResponseSchema = z.object({
-  match: z.string(),
+  matchPercentage: z.preprocess((val) => Number(val), z.number()),
   suggestions: z.array(z.string()),
+  strengths: z.array(z.string()),
 });
 
 export function JobApplicationManager() {
   const [cv, setCv] = useState<File | null>(null);
-  const [cvInvalidFormatError, setCvInvalidFormatError] = useState("");
-  const [match, setMatch] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [result, setResult] = useState<CvAnalyzeResult | null>(null);
   const [chatError, setChatError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -47,8 +49,7 @@ export function JobApplicationManager() {
         JSON.parse(response.data.choices[0]?.message.content ?? ""),
       );
       if (parsedResponse.success) {
-        setMatch(parsedResponse.data.match);
-        setSuggestions(parsedResponse.data.suggestions);
+        setResult({ ...parsedResponse.data });
       } else {
         setChatError(
           "Something went wrong during generating response please try again",
@@ -57,76 +58,68 @@ export function JobApplicationManager() {
       setIsLoading(false);
     }
   };
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file && file.type === "application/pdf") {
-      setCvInvalidFormatError("");
-      setCv(file);
-    } else {
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-      setCv(null);
-      setCvInvalidFormatError("Please upload pdf file");
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setCv(e.target.files[0]);
     }
   };
 
   return (
-    <div className="flex flex-col items-center">
-      {match ? (
-        <h2 className="mb-2 text-3xl font-bold">Your match is {match}</h2>
-      ) : null}
-      {suggestions.length > 0 ? (
-        <div className="flex flex-col">
-          <h3 className="mb-2 text-2xl font-semibold">Suggestions:</h3>
-          <div className="flex flex-col gap-2">
-            {suggestions.map((suggestion) => (
-              <div key={suggestion} className="flex items-center gap-2">
-                <CircleSmall />
-                {suggestion}
+    <div className="space-y-8">
+      <form onSubmit={submitForm} className="space-y-6">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              <div>
+                <label
+                  htmlFor="cv-upload"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  Upload your CV
+                </label>
+                <Input
+                  disabled={isLoading}
+                  ref={fileInputRef}
+                  id="cv-upload"
+                  name="cv-upload"
+                  type="file"
+                  required
+                  onChange={handleFileChange}
+                  accept="application/pdf"
+                />
+                {cv && (
+                  <div
+                    className="mt-2 flex items-center gap-1 text-sm text-green-600"
+                    role="status"
+                  >
+                    <CheckCircle className="h-4 w-4" aria-hidden="true" />
+                    <span>{`File ${cv.name} selected successfully`}</span>
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
-      <form
-        className="mt-4 flex max-w-[400px] flex-col items-center gap-4"
-        onSubmit={submitForm}
-      >
-        {isLoading ? <div>loading</div> : null}
-        <div className="grid w-full gap-1.5">
-          <Label htmlFor="job-description">Job Description</Label>
-          <Textarea
-            disabled={isLoading}
-            id="job-description"
-            name="job-description"
-            placeholder="Paste your job description"
-            className="max-h-[300px]"
-            required
-          />
-        </div>
-        <div className="grid w-full gap-1.5">
-          <Label htmlFor="picture">Your CV</Label>
-          <Input
-            disabled={isLoading}
-            ref={fileInputRef}
-            id="picture"
-            name="picture"
-            type="file"
-            required
-            onChange={handleFileChange}
-            accept="application/pdf"
-          />
-          {cvInvalidFormatError ? (
-            <p className="text-sm text-red-400">{cvInvalidFormatError}</p>
-          ) : null}
-        </div>
-        <Button type="submit" disabled={isLoading} className="w-[150px]">
-          Submit
+
+              <div>
+                <Label htmlFor="job-description">Job Description</Label>
+                <Textarea
+                  disabled={isLoading}
+                  id="job-description"
+                  name="job-description"
+                  placeholder="Paste your job description"
+                  className="max-h-[400px] min-h-[200px]"
+                  required
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? <>Analyzing your CV</> : <>Analyze Match</>}
         </Button>
-        {chatError ? <span className="text-red-400">{chatError}</span> : null}
       </form>
+      {chatError ? <span className="text-red-400">{chatError}</span> : null}
+
+      {result !== null ? <MatchResults results={result} /> : null}
     </div>
   );
 }
