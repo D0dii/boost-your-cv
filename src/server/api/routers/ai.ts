@@ -1,22 +1,24 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { OpenAI } from "openai";
 import { env } from "@/env";
-
-const client = new OpenAI({ apiKey: env.API_KEY });
 
 export const aiRouter = createTRPCRouter({
   check: publicProcedure
     .input(z.object({ jobDescription: z.string(), cvText: z.string() }))
     .mutation(async ({ input }) => {
       try {
-        const response = await client.chat.completions.create({
-          model: "o3-mini",
-          messages: [
-            {
-              role: "user",
-              content: `You are an AI assistant that evaluates how well a CV matches a job description.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const response = await fetch(env.API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "user",
+                content: `You are an AI assistant that evaluates how well a CV matches a job description.
           
           Your task is to:
           1. Analyze the JOB DESCRIPTION and the CV.
@@ -38,11 +40,19 @@ export const aiRouter = createTRPCRouter({
           
           CV:
           ${input.cvText}`,
-            },
-          ],
+              },
+            ],
+          }),
         });
-        return { isSuccess: true, data: response };
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = (await response.json()) as unknown;
+        return { isSuccess: true, data };
       } catch (error) {
+        console.error("AI API error:", error);
         return {
           isSuccess: false,
           data: null,

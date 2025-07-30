@@ -46,7 +46,7 @@ export function JobApplicationManager() {
         return;
       }
       const parsedResponse = aiResponseSchema.safeParse(
-        JSON.parse(response.data.choices[0]?.message.content ?? ""),
+        JSON.parse(response.data.response.response ?? ""),
       );
       if (parsedResponse.success) {
         setResult({ ...parsedResponse.data });
