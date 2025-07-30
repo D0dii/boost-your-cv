@@ -49,7 +49,9 @@ export const aiRouter = createTRPCRouter({
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = (await response.json()) as unknown;
+        const data = (await response.json()) as {
+          response: { response: string };
+        };
         return { isSuccess: true, data };
       } catch (error) {
         console.error("AI API error:", error);
